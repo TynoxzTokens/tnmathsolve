@@ -1,0 +1,1292 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Math Solver By Tino</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #060b16;
+  --surface: #0b1425;
+  --surface2: #101e34;
+  --blue: #398bff;
+  --cyan: #4ddcff;
+  --text: #edf5ff;
+  --muted: #8294ae;
+  --line: rgba(130,170,230,.13);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  width: 550px;
+  height: 550px;
+  background: #0759ca;
+  filter: blur(180px);
+  opacity: .15;
+  top: -260px;
+  left: 20%;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: 400px;
+  height: 400px;
+  background: #00bfff;
+  filter: blur(190px);
+  opacity: .08;
+  bottom: -250px;
+  right: -100px;
+  pointer-events: none;
+}
+
+button, input, select {
+  font-family: inherit;
+}
+
+.app {
+  width: min(1450px, 100%);
+  min-height: 100vh;
+  margin: auto;
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 245px;
+  min-width: 245px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  padding: 27px 18px;
+  border-right: 1px solid var(--line);
+  background: rgba(7,15,29,.75);
+  backdrop-filter: blur(20px);
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 8px 35px;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: linear-gradient(140deg,#287aff,#28d3ff);
+  font-family: 'Space Grotesk';
+  font-weight: 800;
+  font-size: 19px;
+  box-shadow: 0 0 25px rgba(35,136,255,.3);
+}
+
+.brand-name {
+  font-family: 'Space Grotesk';
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.brand-name span {
+  color: var(--cyan);
+}
+
+.brand small {
+  display: block;
+  color: var(--muted);
+  font-size: 9px;
+  margin-top: 3px;
+  letter-spacing: 1.2px;
+}
+
+.nav-label {
+  color: #536985;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.8px;
+  padding: 0 12px;
+  margin: 12px 0;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 12px;
+  color: #91a5c1;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  margin-bottom: 5px;
+  transition: .2s;
+}
+
+.nav-item:hover, .nav-item.active {
+  background: linear-gradient(90deg,rgba(42,125,255,.2),rgba(42,125,255,.04));
+  color: #fff;
+}
+
+.nav-item.active {
+  border-left: 2px solid var(--blue);
+}
+
+.nav-icon {
+  font-size: 16px;
+}
+
+.sidebar-bottom {
+  margin-top: auto;
+}
+
+.dev-card {
+  background: linear-gradient(145deg,#102c55,#0b1b34);
+  border: 1px solid rgba(68,151,255,.2);
+  border-radius: 14px;
+  padding: 15px;
+}
+
+.dev-card strong {
+  font-size: 12px;
+}
+
+.dev-card p {
+  font-size: 10px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin: 7px 0 13px;
+}
+
+.dev-card a {
+  color: var(--cyan);
+  font-size: 10px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+/* MAIN */
+
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 28px 38px 30px;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 45px;
+}
+
+.breadcrumb {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.breadcrumb span {
+  color: white;
+}
+
+.online {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #65e7b1;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .7px;
+}
+
+.online-dot {
+  width: 7px;
+  height: 7px;
+  background: #51e5a4;
+  border-radius: 50%;
+  box-shadow: 0 0 12px #51e5a4;
+}
+
+.hero {
+  position: relative;
+  padding: 38px 35px;
+  border: 1px solid rgba(83,157,255,.2);
+  border-radius: 22px;
+  overflow: hidden;
+  background:
+    linear-gradient(105deg,rgba(15,53,104,.94),rgba(8,26,51,.93) 65%,rgba(7,23,45,.96));
+  margin-bottom: 25px;
+}
+
+.hero::before {
+  content: "∑";
+  position: absolute;
+  right: 8%;
+  top: -55px;
+  font-family: 'Space Grotesk';
+  font-size: 260px;
+  font-weight: 700;
+  color: rgba(83,176,255,.08);
+  transform: rotate(-12deg);
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-tag {
+  color: #72dfff;
+  font-size: 9px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Space Grotesk';
+  font-size: clamp(32px,5vw,49px);
+  line-height: 1.12;
+  letter-spacing: -2px;
+  max-width: 580px;
+}
+
+.hero h1 span {
+  background: linear-gradient(90deg,#50a0ff,#51e1ff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.hero p {
+  color: #9eb4d0;
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 480px;
+  margin-top: 14px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 13px;
+  margin-bottom: 25px;
+}
+
+.stat {
+  background: rgba(13,28,51,.75);
+  border: 1px solid var(--line);
+  padding: 17px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.stat-icon {
+  width: 39px;
+  height: 39px;
+  display: grid;
+  place-items: center;
+  background: rgba(45,132,255,.14);
+  border-radius: 11px;
+  font-size: 17px;
+}
+
+.stat strong {
+  font-family: 'Space Grotesk';
+  font-size: 18px;
+  display: block;
+}
+
+.stat small {
+  color: var(--muted);
+  font-size: 10px;
+  display: block;
+  margin-top: 3px;
+}
+
+/* WORKSPACE */
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0,1.35fr) minmax(245px,.65fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.panel {
+  background: linear-gradient(145deg,rgba(15,30,52,.96),rgba(9,19,35,.97));
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 23px;
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 23px;
+}
+
+.panel-symbol {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#287aff,#27bfff);
+  font-size: 19px;
+}
+
+.panel-heading h2 {
+  font-family: 'Space Grotesk';
+  font-size: 15px;
+}
+
+.panel-heading p {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.field {
+  margin-bottom: 19px;
+}
+
+label {
+  display: block;
+  color: #a9bdd8;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .8px;
+  margin-bottom: 9px;
+}
+
+input, select {
+  width: 100%;
+  border: 1px solid rgba(120,164,220,.17);
+  background: #071326;
+  color: #fff;
+  outline: none;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 12px;
+  transition: .2s;
+}
+
+input:focus, select:focus {
+  border-color: #328cff;
+  box-shadow: 0 0 0 3px rgba(50,140,255,.1);
+}
+
+input::placeholder {
+  color: #536b8a;
+}
+
+select option {
+  background: #0b1930;
+}
+
+.hint {
+  color: #6e86a6;
+  font-size: 10px;
+  line-height: 1.7;
+  margin-top: 8px;
+}
+
+.solve-btn {
+  width: 100%;
+  border: none;
+  border-radius: 10px;
+  padding: 15px;
+  background: linear-gradient(100deg,#2478f4,#22b9ed);
+  color: white;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  cursor: pointer;
+  box-shadow: 0 7px 25px rgba(35,136,255,.2);
+  transition: .25s;
+}
+
+.solve-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(35,136,255,.4);
+}
+
+.result {
+  display: none;
+  margin-top: 18px;
+  animation: show .35s ease;
+}
+
+@keyframes show {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.result-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.result-top span {
+  color: #58d9ff;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+}
+
+.result-badge {
+  background: rgba(47,219,151,.1);
+  color: #61e5ac;
+  border: 1px solid rgba(47,219,151,.2);
+  border-radius: 20px;
+  padding: 6px 9px;
+  font-size: 9px;
+}
+
+.answer {
+  font-family: 'Space Grotesk';
+  font-size: 29px;
+  font-weight: 700;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  background: linear-gradient(90deg,#fff,#65caff);
+  -webkit-background-clip: text;
+  color: transparent;
+  margin-bottom: 17px;
+}
+
+.steps {
+  padding-top: 15px;
+  border-top: 1px solid var(--line);
+}
+
+.steps h3 {
+  font-size: 11px;
+  margin-bottom: 11px;
+}
+
+.steps p {
+  font-size: 11px;
+  color: #a9bdd5;
+  line-height: 1.9;
+  white-space: pre-line;
+}
+
+.copy-btn {
+  margin-top: 15px;
+  border: 1px solid rgba(60,151,255,.3);
+  background: rgba(35,136,255,.1);
+  color: #82caff;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* RIGHT SIDE */
+
+.side-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+
+.side-title {
+  font-family: 'Space Grotesk';
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.level {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.level:last-child {
+  border: none;
+  padding-bottom: 0;
+}
+
+.level-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(45,132,255,.12);
+}
+
+.level strong {
+  font-size: 11px;
+}
+
+.level small {
+  display: block;
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.history-list {
+  max-height: 210px;
+  overflow-y: auto;
+}
+
+.history-item {
+  background: rgba(38,115,219,.08);
+  border: 1px solid rgba(60,130,220,.13);
+  padding: 11px;
+  border-radius: 9px;
+  margin-bottom: 8px;
+}
+
+.history-item strong {
+  font-size: 10px;
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.history-item span {
+  display: block;
+  font-size: 10px;
+  color: var(--cyan);
+  margin-top: 5px;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.clear-btn {
+  background: transparent;
+  border: none;
+  color: #ff8297;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.contact {
+  margin-top: 25px;
+  padding: 28px;
+  text-align: center;
+  background: linear-gradient(110deg,rgba(15,46,87,.85),rgba(9,24,46,.9));
+  border: 1px solid var(--line);
+  border-radius: 17px;
+}
+
+.contact h2 {
+  font-family: 'Space Grotesk';
+  font-size: 20px;
+}
+
+.contact p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 9px 0 19px;
+}
+
+.contact-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.contact-links a {
+  text-decoration: none;
+  color: white;
+  background: rgba(43,130,255,.13);
+  border: 1px solid rgba(68,155,255,.27);
+  border-radius: 9px;
+  padding: 11px 18px;
+  font-size: 10px;
+  font-weight: 800;
+  transition: .2s;
+}
+
+.contact-links a:hover {
+  background: #267ef0;
+  transform: translateY(-2px);
+}
+
+footer {
+  text-align: center;
+  color: #5f7695;
+  font-size: 9px;
+  padding: 25px 0;
+}
+
+@media(max-width: 900px) {
+  .sidebar {
+    width: 70px;
+    min-width: 70px;
+    padding: 20px 10px;
+  }
+
+  .brand {
+    justify-content: center;
+    padding: 0 0 30px;
+  }
+
+  .brand-text, .nav-label, .nav-item span:not(.nav-icon),
+  .dev-card {
+    display: none;
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 13px 5px;
+  }
+
+  .main {
+    padding: 25px 22px;
+  }
+}
+
+@media(max-width: 650px) {
+  .sidebar {
+    display: none;
+  }
+
+  .main {
+    padding: 18px 15px;
+  }
+
+  .topbar {
+    margin-bottom: 25px;
+  }
+
+  .hero {
+    padding: 30px 22px;
+  }
+
+  .hero h1 {
+    letter-spacing: -1.5px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .stat {
+    padding: 11px 8px;
+    gap: 7px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stat-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+
+  .stat strong {
+    font-size: 15px;
+  }
+
+  .stat small {
+    font-size: 8px;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 19px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-icon">T</div>
+    <div class="brand-text">
+      <div class="brand-name">TYNZ <span>MATHJENIUS</span></div>
+      <small>MATH SOLVER PLATFORM</small>
+    </div>
+  </div>
+
+  <div class="nav-label">WORKSPACE</div>
+  <a href="#" class="nav-item active">
+    <span class="nav-icon">⌂</span>
+    <span>Dashboard</span>
+  </a>
+  <a href="#calculator" class="nav-item">
+    <span class="nav-icon">∑</span>
+    <span>Math Solver</span>
+  </a>
+  <a href="#history-section" class="nav-item">
+    <span class="nav-icon">◷</span>
+    <span>History</span>
+  </a>
+
+  <div class="nav-label" style="margin-top:28px">INFORMATION</div>
+  <a href="#education" class="nav-item">
+    <span class="nav-icon">▤</span>
+    <span>Education</span>
+  </a>
+  <a href="#contact" class="nav-item">
+    <span class="nav-icon">✉</span>
+    <span>Contact Developer</span>
+  </a>
+
+  <div class="sidebar-bottom">
+    <div class="dev-card">
+      <strong>Built for learning.</strong>
+      <p>Make mathematics easier with Tynz MathJenius.</p>
+      <a href="https://www.instagram.com/antkasng12/" target="_blank">MEET THE DEVELOPER ↗</a>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+
+  <div class="topbar">
+    <div class="breadcrumb">Workspace / <span>Dashboard</span></div>
+    <div class="online">
+      <div class="online-dot"></div>
+      ALL SYSTEMS READY
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">✦ INTELLIGENT MATH EXPERIENCE</div>
+      <h1>Think smarter.<br><span>Solve faster.</span></h1>
+      <p>
+        Welcome to Tynz MathJenius. Platform matematika
+        untuk membantu kamu memahami soal dan menemukan
+        jawabannya dengan langkah penyelesaian.
+      </p>
+    </div>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="stat-icon">∑</div>
+      <div>
+        <strong>10+</strong>
+        <small>Math Functions</small>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">▤</div>
+      <div>
+        <strong>3</strong>
+        <small>Education Levels</small>
+      </div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon">⚡</div>
+      <div>
+        <strong>Fast</strong>
+        <small>Instant Calculation</small>
+      </div>
+    </div>
+  </section>
+
+  <div class="workspace">
+
+    <section id="calculator" class="panel">
+      <div class="panel-heading">
+        <div class="panel-symbol">∑</div>
+        <div>
+          <h2>Math Solver</h2>
+          <p>Mathematical calculation workspace</p>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>EDUCATION LEVEL</label>
+        <select id="level" onchange="updateTypes()">
+          <option value="sd">Sekolah Dasar (SD)</option>
+          <option value="smp">Sekolah Menengah Pertama (SMP)</option>
+          <option value="sma">Sekolah Menengah Atas (SMA)</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>MATHEMATICS CATEGORY</label>
+        <select id="type" onchange="updateHint()"></select>
+      </div>
+
+      <div class="field">
+        <label>YOUR MATHEMATICAL QUESTION</label>
+        <input id="question" type="text" placeholder="Enter your math problem...">
+        <div class="hint" id="hint"></div>
+      </div>
+
+      <button class="solve-btn" onclick="solveMath()">
+        ✦ &nbsp; SOLVE MATHEMATICS
+      </button>
+
+      <div class="result panel" id="result">
+        <div class="result-top">
+          <span>CALCULATION COMPLETE</span>
+          <div class="result-badge">✓ SOLVED</div>
+        </div>
+        <div class="answer" id="answer"></div>
+        <div class="steps">
+          <h3>✦ Solution Steps</h3>
+          <p id="steps"></p>
+        </div>
+        <button class="copy-btn" onclick="copyResult()">▣ COPY RESULT</button>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+
+      <section class="panel" id="education">
+        <div class="side-title">Education Levels</div>
+
+        <div class="level">
+          <div class="level-icon">📘</div>
+          <div>
+            <strong>Elementary School</strong>
+            <small>Basic mathematics · SD</small>
+          </div>
+        </div>
+
+        <div class="level">
+          <div class="level-icon">📗</div>
+          <div>
+            <strong>Junior High School</strong>
+            <small>Intermediate math · SMP</small>
+          </div>
+        </div>
+
+        <div class="level">
+          <div class="level-icon">📙</div>
+          <div>
+            <strong>Senior High School</strong>
+            <small>Advanced mathematics · SMA</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="history-section">
+        <div class="side-title">◷ Recent Calculations</div>
+        <div class="history-list" id="history">
+          <div class="empty">Your calculation history will appear here.</div>
+        </div>
+        <button class="clear-btn" onclick="clearHistory()">CLEAR HISTORY ↗</button>
+      </section>
+
+    </aside>
+  </div>
+
+  <section class="contact" id="contact">
+    <h2>Let's Connect.</h2>
+    <p>Have a question or suggestion? Get in touch with the developer.</p>
+    <div class="contact-links">
+      <a href="https://wa.me/6285923060761" target="_blank" rel="noopener">☎ Contact Dev</a>
+      <a href="https://www.instagram.com/antkasng12/" target="_blank" rel="noopener">◎ Contact Ig</a>
+    </div>
+  </section>
+
+  <footer>
+    © 2026 TYNZ MATHJENIUS · MATH SOLVER PLATFORM
+  </footer>
+
+</main>
+</div>
+
+<script>
+const types = {
+  sd: [
+    ["arithmetic","Operasi Hitung Dasar"],
+    ["fraction","Pecahan"],
+    ["percentage","Persentase"],
+    ["area","Luas Persegi Panjang"],
+    ["volume","Volume Kubus"]
+  ],
+  smp: [
+    ["arithmetic","Operasi Hitung Dasar"],
+    ["fraction","Pecahan"],
+    ["percentage","Persentase"],
+    ["linear","Persamaan Linear"],
+    ["pythagoras","Teorema Pythagoras"]
+  ],
+  sma: [
+    ["arithmetic","Operasi Hitung Dasar"],
+    ["linear","Persamaan Linear"],
+    ["quadratic","Persamaan Kuadrat"],
+    ["trigonometry","Trigonometri"],
+    ["logarithm","Logaritma"]
+  ]
+};
+
+const hints = {
+  arithmetic: "Contoh: 25 + 35 * 2",
+  fraction: "Contoh: 1/2 + 1/4",
+  percentage: "Contoh: 20, 150 (20% dari 150)",
+  area: "Contoh: 10, 5 (panjang, lebar)",
+  volume: "Contoh: 5 (panjang sisi kubus)",
+  linear: "Contoh: 2, 4, 10 untuk 2x + 4 = 10",
+  pythagoras: "Contoh: 3, 4 (dua sisi siku-siku)",
+  quadratic: "Contoh: 1, -5, 6 untuk x² - 5x + 6 = 0",
+  trigonometry: "Contoh: sin 30, cos 60, atau tan 45",
+  logarithm: "Contoh: 100, 10 untuk log basis 10 dari 100"
+};
+
+let historyData = [];
+let latestResult = "";
+
+function updateTypes() {
+  const level = document.getElementById("level").value;
+  const type = document.getElementById("type");
+
+  type.innerHTML = "";
+
+  types[level].forEach(item => {
+    const option = document.createElement("option");
+    option.value = item[0];
+    option.textContent = item[1];
+    type.appendChild(option);
+  });
+
+  updateHint();
+}
+
+function updateHint() {
+  const selected = document.getElementById("type").value;
+  document.getElementById("hint").textContent = hints[selected];
+}
+
+function getNumbers(value) {
+  return value.split(",").map(x => Number(x.trim()));
+}
+
+function formatNumber(number) {
+  if (!Number.isFinite(number)) return String(number);
+  return Number(number.toFixed(8)).toString();
+}
+
+function calculateArithmetic(expression) {
+  const clean = expression.replace(/\s/g, "");
+
+  if (!clean || !/^[0-9+\-*/().]+$/.test(clean)) {
+    throw new Error("Format operasi hitung tidak valid.");
+  }
+
+  const result = Function('"use strict"; return (' + clean + ')')();
+
+  if (!Number.isFinite(result)) {
+    throw new Error("Hasil perhitungan tidak valid.");
+  }
+
+  return result;
+}
+
+function solveMath() {
+  const type = document.getElementById("type").value;
+  const question = document.getElementById("question").value.trim();
+
+  if (!question) {
+    alert("Masukkan soal matematika terlebih dahulu!");
+    return;
+  }
+
+  let result = "";
+  let steps = "";
+
+  try {
+    if (type === "arithmetic") {
+      const value = calculateArithmetic(question);
+      result = formatNumber(value);
+      steps = "Soal: " + question +
+        "\nGunakan urutan operasi matematika." +
+        "\nHasil akhir: " + result;
+
+    } else if (type === "fraction") {
+      const match = question.match(
+        /^\s*(-?\d+)\s*\/\s*(\d+)\s*([+-])\s*(-?\d+)\s*\/\s*(\d+)\s*$/
+      );
+
+      if (!match) throw new Error("Gunakan format seperti 1/2 + 1/4.");
+
+      const a = Number(match[1]);
+      const b = Number(match[2]);
+      const op = match[3];
+      const c = Number(match[4]);
+      const d = Number(match[5]);
+
+      if (b === 0 || d === 0) throw new Error("Penyebut tidak boleh nol.");
+
+      const numerator = op === "+" ? a*d + c*b : a*d - c*b;
+      const denominator = b*d;
+
+      function gcd(x,y) {
+        return y ? gcd(y,x%y) : Math.abs(x);
+      }
+
+      const divisor = gcd(numerator,denominator);
+      result = (numerator/divisor) + "/" + (denominator/divisor);
+
+      steps = "Soal: " + question +
+        "\nSamakan penyebut: " + b + " × " + d +
+        "\nPembilang: " + a + " × " + d + " " + op + " " + c + " × " + b +
+        "\nHasil: " + numerator + "/" + denominator +
+        "\nSederhanakan pecahan." +
+        "\nHasil akhir: " + result;
+
+    } else if (type === "percentage") {
+      const [percent,total] = getNumbers(question);
+
+      if (!Number.isFinite(percent) || !Number.isFinite(total))
+        throw new Error("Masukkan dua angka yang valid.");
+
+      const value = percent/100*total;
+      result = formatNumber(value);
+      steps = percent + "% dari " + total +
+        "\n= " + percent + "/100 × " + total +
+        "\n= " + result;
+
+    } else if (type === "area") {
+      const [length,width] = getNumbers(question);
+
+      if (!(length > 0) || !(width > 0))
+        throw new Error("Panjang dan lebar harus lebih dari nol.");
+
+      result = formatNumber(length*width) + " satuan²";
+      steps = "Rumus: Luas = panjang × lebar" +
+        "\n= " + length + " × " + width +
+        "\n= " + result;
+
+    } else if (type === "volume") {
+      const side = Number(question);
+
+      if (!(side > 0)) throw new Error("Panjang sisi harus lebih dari nol.");
+
+      result = formatNumber(side**3) + " satuan³";
+      steps = "Rumus: Volume kubus = sisi × sisi × sisi" +
+        "\n= " + side + " × " + side + " × " + side +
+        "\n= " + result;
+
+    } else if (type === "linear") {
+      const [a,b,c] = getNumbers(question);
+
+      if (![a,b,c].every(Number.isFinite) || a === 0)
+        throw new Error("Masukkan tiga angka valid dan a tidak boleh nol.");
+
+      const x = (c-b)/a;
+      result = "x = " + formatNumber(x);
+      steps = "Persamaan: " + a + "x + " + b + " = " + c +
+        "\nPindahkan konstanta: " + a + "x = " + (c-b) +
+        "\nBagi kedua sisi dengan " + a +
+        "\nHasil akhir: x = " + formatNumber(x);
+
+    } else if (type === "pythagoras") {
+      const [a,b] = getNumbers(question);
+
+      if (!(a > 0) || !(b > 0))
+        throw new Error("Kedua sisi harus lebih dari nol.");
+
+      const c = Math.sqrt(a*a+b*b);
+      result = formatNumber(c);
+      steps = "Rumus: c² = a² + b²" +
+        "\n= " + a + "² + " + b + "²" +
+        "\n= " + (a*a) + " + " + (b*b) +
+        "\nc = √" + (a*a+b*b) +
+        "\nHasil akhir: " + result;
+
+    } else if (type === "quadratic") {
+      const [a,b,c] = getNumbers(question);
+
+      if (![a,b,c].every(Number.isFinite) || a === 0)
+        throw new Error("Masukkan tiga angka valid dan a tidak boleh nol.");
+
+      const D = b*b-4*a*c;
+
+      if (D < 0) {
+        result = "Tidak memiliki akar real";
+        steps = "Diskriminan D = b² - 4ac" +
+          "\nD = " + D +
+          "\nKarena D < 0, persamaan tidak memiliki akar real.";
+      } else {
+        const x1 = (-b+Math.sqrt(D))/(2*a);
+        const x2 = (-b-Math.sqrt(D))/(2*a);
+
+        result = "x₁ = " + formatNumber(x1) +
+          "\nx₂ = " + formatNumber(x2);
+
+        steps = "Diskriminan D = b² - 4ac" +
+          "\nD = " + D +
+          "\nRumus: x = (-b ± √D) / 2a" +
+          "\nHasil akhir: " + result;
+      }
+
+    } else if (type === "trigonometry") {
+      const match = question.match(/^\s*(sin|cos|tan)\s+(-?\d+(?:\.\d+)?)\s*$/i);
+
+      if (!match)
+        throw new Error("Gunakan format sin 30, cos 60, atau tan 45.");
+
+      const fn = match[1].toLowerCase();
+      const angle = Number(match[2]);
+      const rad = angle*Math.PI/180;
+      let value;
+
+      if (fn === "sin") value = Math.sin(rad);
+      if (fn === "cos") value = Math.cos(rad);
+      if (fn === "tan") value = Math.tan(rad);
+
+      if (Math.abs(value) < 1e-10) value = 0;
+
+      result = formatNumber(value);
+      steps = "Fungsi: " + fn +
+        "\nSudut: " + angle + "°" +
+        "\nKonversi ke radian: " + angle + " × π/180" +
+        "\nHasil akhir: " + result;
+
+    } else if (type === "logarithm") {
+      const [number,base] = getNumbers(question);
+
+      if (!(number > 0) || !(base > 0) || base === 1)
+        throw new Error("Bilangan harus positif dan basis tidak boleh 1.");
+
+      const value = Math.log(number)/Math.log(base);
+      result = formatNumber(value);
+      steps = "Logaritma: log basis " + base + " dari " + number +
+        "\nGunakan perubahan basis:" +
+        "\nlog(a) / log(b)" +
+        "\nHasil akhir: " + result;
+    }
+
+    showResult(result,steps,question);
+
+  } catch(error) {
+    alert(error.message || "Terjadi kesalahan saat menghitung.");
+  }
+}
+
+function showResult(result,steps,question) {
+  document.getElementById("answer").textContent = result;
+  document.getElementById("steps").textContent = steps;
+
+  const card = document.getElementById("result");
+  card.style.display = "block";
+
+  latestResult = "Soal: " + question +
+    "\nHasil: " + result + "\n\n" + steps;
+
+  historyData.unshift({question,result});
+  renderHistory();
+
+  card.scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#039;"
+  })[char]);
+}
+
+function renderHistory() {
+  const area = document.getElementById("history");
+
+  if (historyData.length === 0) {
+    area.innerHTML = '<div class="empty">Your calculation history will appear here.</div>';
+    return;
+  }
+
+  area.innerHTML = historyData.map(item => `
+    <div class="history-item">
+      <strong>${escapeHTML(item.question)}</strong>
+      <span>${escapeHTML(item.result)}</span>
+    </div>
+  `).join("");
+}
+
+function clearHistory() {
+  historyData = [];
+  renderHistory();
+}
+
+function copyResult() {
+  if (!latestResult) return;
+
+  const fallback = () => {
+    const area = document.createElement("textarea");
+    area.value = latestResult;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+    alert("Hasil berhasil disalin!");
+  };
+
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(latestResult)
+      .then(() => alert("Hasil berhasil disalin!"))
+      .catch(fallback);
+  } else {
+    fallback();
+  }
+}
+
+document.getElementById("question").addEventListener("keydown", event => {
+  if (event.key === "Enter") solveMath();
+});
+
+updateTypes();
+</script>
+
+</body>
+</html>
